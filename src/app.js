@@ -56,7 +56,29 @@ const rootQuery = new GraphQLObjectType({
   },
 });
 
-const schema = new GraphQLSchema({ query: rootQuery });
+const rootMutation = new GraphQLObjectType({
+  name: "RootMutation",
+  description: "This is the rootMutation",
+  fields: {
+    language: {
+      type: languageType,
+      args: {
+        language: { type: GraphQLString },
+        loved: { type: GraphQLBoolean },
+      },
+      resolve: (_, { language, loved }) => {
+        const newLanguage = {
+          id: seedData.length + 1,
+          language,
+          loved,
+        };
+        seedData.push(newLanguage);
+        return newLanguage;
+      },
+    },
+  },
+});
+const schema = new GraphQLSchema({ query: rootQuery, mutation: rootMutation });
 
 app.use(
   "/graphql",
